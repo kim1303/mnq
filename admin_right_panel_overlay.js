@@ -9,6 +9,36 @@
 (function(){
   const NPOINT_URL = "https://api.npoint.io/04ac6b88e333695ed90b";
   const ACCOUNT_FIXED = "7020-3101";
+
+  function calcDminus(applyDateStr){
+    try{
+      if(!applyDateStr) return 20;
+      const apply = new Date(applyDateStr);
+      const expiry = new Date(apply);
+      expiry.setDate(expiry.getDate() + 30); // 신청일+30일 = 만기
+      const today = new Date();
+      today.setHours(0,0,0,0);
+      expiry.setHours(0,0,0,0);
+      const diff = Math.ceil((expiry - today) / (1000*60*60*24));
+      return diff;
+    }catch(e){ return 20; }
+  }
+  
+  function formatApplyExpiry(applyDateStr){
+    try{
+      const apply = new Date(applyDateStr);
+      const expiry = new Date(apply);
+      expiry.setDate(expiry.getDate() + 30);
+      const applyFmt = apply.toISOString().slice(0,10);
+      const expiryFmt = expiry.toISOString().slice(0,10);
+      const d = calcDminus(applyDateStr);
+      return {applyFmt, expiryFmt, d, dText: d>=0?`D-${d}`:`D+${Math.abs(d)} (만기)`};
+    }catch(e){
+      return {applyFmt: applyDateStr, expiryFmt: '-', d: 20, dText: 'D-20'};
+    }
+  }
+
+
   const SYMBOL = "MNQM26";
   const POINT = 2;
   const FEE = 30;
@@ -138,23 +168,27 @@
     
     const users = central.mnq_users || [];
     if(users.length===0){
+      const today = new Date().toISOString().slice(0,10);
+      const sample1 = formatApplyExpiry('2025-11-03');
+      const sample2 = formatApplyExpiry('2025-11-08');
       el.innerHTML = `
-        <div>박영희: D-20 OFFLINE +950$ -180$ 2계약 30일(150만원) | 수수료 ${FEE}$ | 잔여일 D-20 | 보유중 | 2계약 | 신호 BUY</div>
-        <div>김철수: D-15 ONLINE +620$ -90$ 1계약 | 수수료 ${FEE}$ | 잔여일 D-15 | 보유중 | 1계약 | 신호 SELL</div>
-        <div style="font-size:10px;color:#888;margin-top:4px;">수수료 POINT ${POINT} FEE ${FEE} | 일자 가입/승인/신청 | 잔여일 D- 계산 (신청일+30일)</div>
+        <div>박영희: <span style="color:${sample1.d<=3?'#ff4444':sample1.d<=7?'#ffcc00':'#4caf50'};font-weight:bold;">${sample1.dText}</span> OFFLINE +950$ -180$ 2계약 30일(150만원) | 수수료 ${FEE}$ | 신청일 ${sample1.applyFmt}+30일=${sample1.expiryFmt} | 잔여일 ${sample1.dText} | 보유중 | 2계약 | 신호 BUY | 공식 (매도가-매수가)×${POINT}×수량-${FEE}</div>
+        <div>김철수: <span style="color:${sample2.d<=3?'#ff4444':sample2.d<=7?'#ffcc00':'#4caf50'};font-weight:bold;">${sample2.dText}</span> ONLINE +620$ -90$ 1계약 | 수수료 ${FEE}$ | 신청일 ${sample2.applyFmt}+30일=${sample2.expiryFmt} | 잔여일 ${sample2.dText} | 보유중 | 1계약 | 신호 SELL | 공식 (매도가-매수가)×${POINT}×수량-${FEE}</div>
+        <div style="font-size:10px;color:#888;margin-top:4px;">수수료 POINT ${POINT} FEE ${FEE} | 신청일+30일=만기일 | D- 자동계산 (매일 00시 갱신) | 오늘 ${today} | ACCOUNT ${ACCOUNT_FIXED} FIXED</div>
       `;
       return;
     }
     
     let html = '';
     users.slice(0,6).forEach(u=>{
-      const remain = u.remain || u.remaining || 20;
+      const applyDateRaw = u.applyDate || u.apply_date || '2025-11-03';
+      const {applyFmt, expiryFmt, dText} = formatApplyExpiry(applyDateRaw);
       const contracts = u.contracts || 1;
       const holding = u.holding || '보유중';
       const fee = u.feePaid || `${FEE}$`;
-      const applyDate = u.applyDate || '2025-11-03';
       const approvalDate = u.approvalDate || '-';
-      html += `<div style="padding:2px 0;border-top:1px solid #2a2a2a;">${u.name||u.id}: D-${remain} ${u.status||'ACTIVE'} ${u.profit||'+0$'} | 수수료 ${fee} | 신청일 ${applyDate} | 승인일 ${approvalDate} | 잔여일 D-${remain} | ${holding} | ${contracts}계약 | 신호 ${u.lastSignal||'BUY'}</div>`;
+      const remain = calcDminus(applyDateRaw);
+      html += `<div style="padding:2px 0;border-top:1px solid #2a2a2a;">${u.name||u.id}: <span style="color:${remain<=3?'#ff4444':remain<=7?'#ffcc00':'#4caf50'};font-weight:bold;">${dText}</span> ${u.status||'ACTIVE'} ${u.profit||'+0$'} | 수수료 ${fee} | 신청일 ${applyFmt} +30일=${expiryFmt} | 승인일 ${approvalDate} | 잔여일 ${dText} | ${holding} | ${contracts}계약 | 신호 ${u.lastSignal||'BUY'} | 공식 (exit-entry)*${POINT}*contracts-${FEE}</div>`;
     });
     html += `<div style="font-size:10px;color:#888;margin-top:4px;">수수료 POINT ${POINT} FEE ${FEE} | 신청일+30일 = 만기일 | D- 자동계산</div>`;
     el.innerHTML = html;
@@ -188,7 +222,13 @@
         applyEl.innerHTML = `
           <div>신규 3명: 최민수 NEW +80$ | 이신형 당일매매(5만원) +0$ | 김다일 1일(5만원) +120$</div>
           <div style="margin-top:4px;"><button style="padding:4px 8px;background:#4caf50;border:none;border-radius:3px;color:#000;font-size:11px;">승인 green</button> <button style="padding:4px 8px;background:#ff4444;border:none;border-radius:3px;color:#fff;font-size:11px;">취소 red</button> <button style="padding:4px 8px;background:#666;border:none;border-radius:3px;color:#fff;font-size:11px;">차단 gray</button> <button style="padding:4px 8px;background:#ffcc00;border:none;border-radius:3px;color:#000;font-size:11px;">긴급정지</button></div>
-          <div style="font-size:10px;color:#888;margin-top:4px;">신청일 2025-11-03 + 30일 = D-22 / 10일(50만원) | SYMBOL MNQM26 / NPOINT 04ac... | 승인일자 - | 복제매매 시작일 - | 신청횟수 2회</div>
+          const sample = formatApplyExpiry('2025-11-03');
+          applyEl.innerHTML = `
+          <div>신규 3명: 최민수 NEW +80$ | 이신형 당일매매(5만원) +0$ | 김다일 1일(5만원) +120$</div>
+          <div style="margin-top:4px;"><button style="padding:4px 8px;background:#4caf50;border:none;border-radius:3px;color:#000;font-size:11px;">승인 green</button> <button style="padding:4px 8px;background:#ff4444;border:none;border-radius:3px;color:#fff;font-size:11px;">취소 red</button> <button style="padding:4px 8px;background:#666;border:none;border-radius:3px;color:#fff;font-size:11px;">차단 gray</button> <button style="padding:4px 8px;background:#ffcc00;border:none;border-radius:3px;color:#000;font-size:11px;">긴급정지</button></div>
+          <div style="font-size:10px;color:#888;margin-top:4px;">신청일 ${sample.applyFmt} + 30일 = ${sample.expiryFmt} = ${sample.dText} / 10일(50만원) | SYMBOL MNQM26 / NPOINT 04ac6b88e333695ed90b / ACCOUNT 7020-3101 FIXED | 승인일자 - | 복제매매 시작일 - | 신청횟수 2회 | 공식 (매도가-매수가)×${POINT}×수량-${FEE} = (exit-entry)*${POINT}*contracts-${FEE}</div>
+        `;
+          return;
         `;
       } else {
         applyEl.innerHTML = pending.map(p=> `<div>${p.name||p.real_name||'신청자'}: ${p.applyDate||''} D-${p.remain||20} | ${p.symbol||SYMBOL} | ${p.status||'대기'} <button style="padding:2px 6px;background:#4caf50;border:none;border-radius:2px;font-size:10px;">승인</button></div>`).join('');
