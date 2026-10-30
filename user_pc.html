@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>최종이용자_고정폼 - 10-14 최종 확정 / V53 HANGYUL FIXED</title>
+<style>
+body{background:#121212;color:#fff;font-family:'Malgun Gothic',sans-serif;margin:0;padding:20px}
+.top{border:1px solid #333;padding:12px;background:#1e1e1e;border-radius:8px}
+.status{display:flex;justify-content:space-between;align-items:center}
+.badge{background:#4caf50;color:#000;padding:3px 10px;border-radius:4px;font-size:12px}
+.badge.stop{background:#ffcc00}
+.npoint{font-size:11px;color:#888;margin-top:8px}
+.profit{font-size:28px;color:#4fc3f7;font-weight:bold;margin-top:16px}
+.profit-sub{font-size:13px;color:#aaa}
+.compare{margin:16px 0}
+.bar-track{background:#2a2a2a;height:8px;border-radius:4px;overflow:hidden;display:flex;margin-top:6px}
+.bar-admin{background:#facc15;width:72.3%}
+.bar-user{background:#4caf50;width:27.8%}
+.donut-wrap{display:flex;justify-content:center;margin:16px 0}
+.mode{display:flex;gap:10px;margin:16px 0}
+.toggle{flex:1;background:#2a2a2a;padding:12px;border-radius:8px;text-align:center;cursor:pointer;font-size:13px;border:1px solid #333}
+.toggle.on{border:1px solid #facc15;background:#2e2a15}
+.btns{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:20px}
+.btn{padding:12px;background:#333;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:13px}
+.btn.stop{background:#ffcc00;color:#000}
+.log{background:#000;color:#0f0;padding:10px;font-family:Consolas,monospace;font-size:12px;height:140px;overflow:auto;border-radius:6px;border:1px solid #222}
+#authCard{display:block;background:#1e1e1e;border:1px solid #444;padding:20px;border-radius:8px;text-align:center}
+#mainCard{display:none}
+#profitPopup{display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#1e1e1e;border:1px solid #444;padding:20px;width:320px;border-radius:8px;z-index:99}
+.flex-between{display:flex;justify-content:space-between;margin:6px 0;font-size:13px}
+.profit-up{color:#facc15}
+.profit-down{color:#ff6b6b}
+</style>
+</head>
+<body>
+<div id="authCard">
+<h3>승인 대기</h3>
+<p style="font-size:12px;color:#aaa">텔레그램폼 연동 - Admin 승인 대기중 - Index.html에서 신청 필요<br>mnq_signal_2026_v2_bot 연결됨 / 승인대기중</p>
+<button class="btn" onclick="document.getElementById('authCard').style.display='none';document.getElementById('mainCard').style.display='block'">텔레그램폼으로 이동 (테스트)</button>
+</div>
+
+<div id="mainCard">
+<div class="top">
+<div class="status"><span>운영상태 / 계좌 자동 인식 - 실명 공유 (Admin/User/텔레그램폼)</span><span class="badge" id="tradeBadge">접속중</span></div>
+<div style="margin-top:8px;font-size:13px">운영 관리자 따라하기! 김성택 (USER_1 내부) - 임시 가명 / 완성 후 실명</div>
+<div class="npoint">NPOINT 04ac6b88e333695ed90b | ACCOUNT 7020-3101 고정(4943-9764) | MNQM26 | $2,111,184 오늘 수익 (실매매)</div>
+</div>
+
+<div class="profit">$2,111,184 <span style="font-size:14px">오늘 수익 (실매매)</span></div>
+<div class="profit-sub">입금 $+2,150.50 당일 $-45.20 | 관리자 72.3% 내PC 27.8% | 관리자 수익률 +60% / 내PC 수익률 +54%</div>
+
+<div class="compare">
+<div style="display:flex;justify-content:space-between;font-size:12px"><span>수익성 비교 72.3% vs 27.8%</span><span>관리자 72.3% 내PC 27.8%</span></div>
+<div class="bar-track"><div class="bar-admin"></div><div class="bar-user"></div></div>
+</div>
+
+<div class="donut-wrap">
+<svg width="120" height="120" viewBox="0 0 100 100">
+<circle cx="50" cy="50" r="35" fill="none" stroke="#2a2a2a" stroke-width="12"/>
+<circle cx="50" cy="50" r="35" fill="none" stroke="#facc15" stroke-width="12" stroke-dasharray="127.2 48.7" stroke-linecap="round" transform="rotate(-90 50 50)"/>
+<circle cx="50" cy="50" r="35" fill="none" stroke="#4caf50" stroke-width="12" stroke-dasharray="48.9 127" stroke-linecap="round" transform="rotate(75 50 50)"/>
+</svg>
+</div>
+
+<div class="mode">
+<div class="toggle on" id="copyToggle" onclick="toggleTrade('copy')">관리자 매매복제 ON / 매매중 정상 가동중 / 0.05초 복제 / PC 항상 ON</div>
+<div class="toggle" id="myToggle" onclick="toggleTrade('my')">내PC로 매매 OFF</div>
+</div>
+
+<div style="background:#3a3000;color:#ffcc00;padding:8px;font-size:12px;border-radius:4px;margin-top:10px">1억 전에는 출금 하지 마십시오.</div>
+
+<div class="btns">
+<button class="btn" onclick="showProfit()">수익확인</button>
+<button class="btn" onclick="resetView()">초기화면</button>
+<button class="btn stop" id="stopBtn" onclick="confirmStop()">매매중지</button>
+</div>
+
+<div class="log" id="logBox">서버 수신: [MNQM26] BUY 리턴:0<br>현재 신호 MNQ26 SELL 1<br>....<br>....<br></div>
+</div>
+
+
+<!-- USER PC 개인매매종목 관리 - 나스닥외 -->
+<div style="margin-top:20px;background:#1e1e1e;border:1px solid #333;padding:12px;border-radius:8px">
+<h3 style="margin:0 0 10px 0;font-size:13px;color:#4caf50">USER PC 개인매매종목 관리 - 나스닥외 (종목,매수일,매수가,판매가,수량,보유유무)</h3>
+<div style="font-size:11px;color:#888;margin-bottom:8px">C:/MNQ/base.json + NPOINT user_pc_base → ADMIN PC 동기화 | 나스닥(MNQM26) 외 개인 종목 관리</div>
+<table style="width:100%;border-collapse:collapse;font-size:12px">
+<tr style="background:#2a2a2a;color:#888"><th style="padding:6px;text-align:left">종목</th><th>매수일자</th><th>매수/매도가</th><th>수량</th><th>보유여부</th><th>관리</th></tr>
+<tr style="border-top:1px solid #333"><td style="padding:6px">GCQ5</td><td>2025-11-10</td><td>2340.5/2355.2</td><td>2계약</td><td style="color:#4caf50">보유중</td><td><button class="btn" style="padding:4px 8px;font-size:11px">수정</button><button class="btn" style="padding:4px 8px;font-size:11px;background:#ff4444">삭제</button></td></tr>
+<tr style="border-top:1px solid #333"><td style="padding:6px">CLQ5</td><td>2025-11-12</td><td>78.25/-</td><td>1계약</td><td style="color:#4caf50">보유중</td><td><button class="btn" style="padding:4px 8px;font-size:11px">수정</button><button class="btn" style="padding:4px 8px;font-size:11px;background:#ff4444">삭제</button></td></tr>
+<tr style="border-top:1px solid #333"><td style="padding:6px">MNQM26</td><td>2025-11-15</td><td>18410/18560</td><td>1계약</td><td style="color:#888">미보유</td><td><button class="btn" style="padding:4px 8px;font-size:11px">수정</button><button class="btn" style="padding:4px 8px;font-size:11px;background:#ff4444">삭제</button></td></tr>
+</table>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr 1fr auto;gap:6px;margin-top:10px">
+<input id="p_symbol" placeholder="종목" style="padding:8px;background:#2a2a2a;border:1px solid #444;color:#fff;border-radius:4px;font-size:12px">
+<input id="p_date" type="date" style="padding:8px;background:#2a2a2a;border:1px solid #444;color:#fff;border-radius:4px;font-size:12px">
+<input id="p_buy" placeholder="매수가" style="padding:8px;background:#2a2a2a;border:1px solid #444;color:#fff;border-radius:4px;font-size:12px">
+<input id="p_sell" placeholder="매도가" style="padding:8px;background:#2a2a2a;border:1px solid #444;color:#fff;border-radius:4px;font-size:12px">
+<input id="p_qty" placeholder="수량" style="padding:8px;background:#2a2a2a;border:1px solid #444;color:#fff;border-radius:4px;font-size:12px">
+<select id="p_hold" style="padding:8px;background:#2a2a2a;border:1px solid #444;color:#fff;border-radius:4px;font-size:12px"><option>보유중</option><option>미보유</option></select>
+<button onclick="addPersonal()" style="padding:8px 14px;background:#4caf50;color:#000;border:none;border-radius:4px;font-size:12px;cursor:pointer">추가</button>
+</div>
+<div style="font-size:10px;color:#666;margin-top:6px">List 테이블 형식 · 박스 나누기 제거 · USER PC ↔ ADMIN PC 동기화 | 공식: profit = (매도가-매수가)×POINT×수량-FEE</div>
+</div>
+
+<!-- FORM2 수익 관리 통합 -->
+<div style="margin-top:20px;background:#1e1e1e;border:1px solid #333;padding:12px;border-radius:8px">
+<h3 style="margin:0 0 10px 0;font-size:13px;color:#facc15">FORM2 수익 관리 - daily_realized $2,111,184</h3>
+<div style="display:flex;justify-content:space-between;font-size:12px"><span>수익회수 60% vs 12%</span><span>관리자 60% / 내PC 40%</span></div>
+<div style="background:#2a2a2a;height:8px;border-radius:4px;overflow:hidden;margin:8px 0"><div style="background:#facc15;width:60%;height:8px"></div></div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:12px;margin-top:10px">
+<div>관리자 수익률 +60%<br>입금 +$2,150.50</div>
+<div>내 PC 수익률 +54%<br>당일 -$45.20</div>
+</div>
+<div style="background:#3a3000;color:#ffcc00;padding:8px;font-size:11px;border-radius:4px;margin-top:10px">1억 전에는 출금 하지 마십시오. 노란 경고박스 - 수익 누적 후 출금</div>
+<div style="margin-top:10px;font-size:11px;color:#888">
+공식: profit = (exit - entry) * 2 * contracts - 30<br>
+예: (18560-18410)*2*2-30 = $570 LONG<br>
+C:/MNQ/license.json USER_1 2027-10-01 | account.json 7020-3101 고정 | base.json NPOINT
+</div>
+</div>
+
+<script>
+function addPersonal(){
+  let s=document.getElementById('p_symbol').value;
+  let d=document.getElementById('p_date').value;
+  let b=document.getElementById('p_buy').value;
+  let sel=document.getElementById('p_sell').value;
+  let q=document.getElementById('p_qty').value;
+  let h=document.getElementById('p_hold').value;
+  if(!s){alert('종목 입력');return;}
+  // Save to localStorage and NPOINT user_pc_base
+  let personal = JSON.parse(localStorage.getItem('user_pc_personal')||'[]');
+  personal.push({symbol:s,date:d,buy:b,sell:sel,qty:q,hold:h,ts:Date.now()});
+  localStorage.setItem('user_pc_personal',JSON.stringify(personal));
+  // Also to base.json simulation
+  let base = JSON.parse(localStorage.getItem('base_json')||'{}');
+  if(!base.personal) base.personal=[];
+  base.personal=personal;
+  localStorage.setItem('base_json',JSON.stringify(base));
+  logBox.innerHTML+=`<br>개인매매 추가: ${s} ${d} ${b}/${sel} ${q} ${h} → ADMIN PC 동기화`;
+  // POST to NPOINT user_pc_base
+  fetch('https://api.npoint.io/04ac6b88e333695ed90b',{method:'POST',body:JSON.stringify({type:'personal_add',symbol:s,date:d,buy:b,sell:sel,qty:q,hold:h})}).catch(()=>{});
+  alert('추가 완료 - ADMIN PC에서 확인 가능');
+}
+</script>
+
+<div id="profitPopup">
+<div class="flex-between"><strong>전일까지의 수익</strong><span onclick="closeProfit()" style="cursor:pointer">X</span></div>
+<div class="flex-between"><span>박영희</span><span class="profit-up">+$120.50 (+2.3%)</span></div>
+<div class="flex-between"><span>김철수</span><span class="profit-down">-$45.20 (-0.8%)</span></div>
+<div class="flex-between"><span>이영수</span><span>----------</span></div>
+</div>
+
+<script>
+let prev_mode='copy', trading='ON';
+function toggleTrade(m){if(m==='copy'){copyToggle.classList.add('on');copyToggle.innerText='관리자 매매복제 ON / 매매중 정상 가동중 / 0.05초 복제 / PC 항상 ON';myToggle.classList.remove('on');myToggle.innerText='내PC로 매매 OFF';prev_mode='copy';}else{myToggle.classList.add('on');myToggle.innerText='내PC로 매매 ON';copyToggle.classList.remove('on');copyToggle.innerText='관리자 매매복제 OFF';prev_mode='my';}}
+function updateTradingUI(){let b=tradeBadge;if(trading==='STOP'){b.innerText='매매정지';b.className='badge stop';stopBtn.innerText='매매시작';stopBtn.style.background='#4caf50';}else{b.innerText='접속중';b.className='badge';stopBtn.innerText='매매중지';stopBtn.style.background='#ffcc00';}}
+function confirmStop(){if(trading==='ON'){trading='STOP';copyToggle.classList.remove('on');myToggle.classList.remove('on');}else{trading='ON';toggleTrade(prev_mode);}updateTradingUI();}
+function showProfit(){profitPopup.style.display='block';}
+function closeProfit(){profitPopup.style.display='none';}
+function resetView(){logBox.innerHTML='서버 수신: [MNQM26] BUY 리턴:0<br>....<br>';}
+setInterval(()=>{if(trading==='ON'){logBox.innerHTML+='....<br>';logBox.scrollTop=logBox.scrollHeight;}},3000);
+</script>
+</body>
+</html>
+
