@@ -111,11 +111,132 @@ td{padding:6px;border-top:1px solid #2a2a2a}
 </div>
 </div>
 
-<script src="mnq_real_trade_link.js"></script>
-<script src="telegram_auto_id.js"></script>
-<script src="mnq_3file_sync_overlay.js"></script>
-<script src="admin_right_panel_overlay.js"></script>
-<script src="file_count_footer.js"></script>
+<script>
+(function(){
+  function calcDminus(applyDateStr){
+    try{
+      if(!applyDateStr) return 20;
+      const apply = new Date(applyDateStr);
+      const expiry = new Date(apply); expiry.setDate(expiry.getDate()+30);
+      const today = new Date(); today.setHours(0,0,0,0); expiry.setHours(0,0,0,0);
+      return Math.ceil((expiry - today)/(1000*60*60*24));
+    }catch(e){ return 20; }
+  }
+  function formatApplyExpiry(applyDateStr){
+    try{
+      const apply = new Date(applyDateStr);
+      const expiry = new Date(apply); expiry.setDate(expiry.getDate()+30);
+      const applyFmt = apply.toISOString().slice(0,10);
+      const expiryFmt = expiry.toISOString().slice(0,10);
+      const d = calcDminus(applyDateStr);
+      return {applyFmt, expiryFmt, d, dText: d>=0?`D-${d}`:`D+${Math.abs(d)} (만기)`};
+    }catch(e){ return {applyFmt: applyDateStr, expiryFmt:'-', d:20, dText:'D-20'}; }
+  }
+  
+  const userData = {
+    '박영희': {apply:'2025-11-03', join:'2025-11-08', profit:'+950$ / -180$ (순 +770$) 수익 green', contracts:'2계약', fee:'30일(150만원)', type:'실투자', status:'OFFLINE'},
+    '김철수': {apply:'2025-11-08', join:'2025-11-10', profit:'+620$ / -90$ (순 +530$) 수익 green', contracts:'1계약', fee:'10일(50만원)', type:'모의', status:'ONLINE'},
+    '이영수': {apply:'2025-10-25', join:'2025-10-26', profit:'+1240$ / -320$ (순 +920$) 수익 green', contracts:'3계약', fee:'30일(150만원)', type:'실투자', status:'OFFLINE'},
+    '최민수': {apply:'2025-11-15', join:'2025-11-15', profit:'+80$ / -20$ (순 +60$) NEW', contracts:'1계약', fee:'1일(5만원)', type:'모의', status:'OFFLINE'},
+    '정지연': {apply:'2025-10-20', join:'2025-10-21', profit:'+2100$ / -450$ (순 +1650$) 수익 green', contracts:'2계약', fee:'30일(150만원)', type:'실투자', status:'ONLINE'},
+    '한지민': {apply:'2025-11-01', join:'2025-11-02', profit:'+310$ / -110$ (순 +200$) 수익 green', contracts:'1계약', fee:'10일(50만원)', type:'모의', status:'ONLINE'},
+    '오세훈': {apply:'2025-10-28', join:'2025-10-29', profit:'+44$ / -30$ (순 +14$) 수익', contracts:'1계약', fee:'10일(50만원)', type:'실투자', status:'OFFLINE'},
+    '이신형': {apply:'2025-11-18', join:'2025-11-18', profit:'+0$ / -0$ (순 +0$) NEW', contracts:'1계약', fee:'당일매매(5만원)', type:'모의', status:'OFFLINE'},
+    '김다일': {apply:'2025-11-10', join:'2025-11-11', profit:'+120$ / -0$ (순 +120$) NEW', contracts:'1계약', fee:'1일(5만원)', type:'모의', status:'ONLINE'}
+  };
+
+  function makeClickable(){
+    let greenCard=null;
+    document.querySelectorAll('.card').forEach(c=>{
+      if(c.innerHTML.includes('GREEN User List')) greenCard=c;
+    });
+    if(!greenCard){ console.log('GREEN 카드 못찾음'); return; }
+    
+    // 왼쪽 리스트 컨테이너 찾기 - 여러 방법 시도
+    let items=[];
+    let container = greenCard.querySelector('div[style*="margin-top:8px"]');
+    if(container) items = Array.from(container.querySelectorAll('div'));
+    if(items.length===0){
+      // 모든 div 중 박영희, 김철수 포함된 것
+      items = Array.from(greenCard.querySelectorAll('div')).filter(d=>d.textContent.includes('박영희')||d.textContent.includes('김철수')||d.textContent.includes('이영수'));
+    }
+    if(items.length<9){
+      // 전체에서 다시 시도
+      const allDivs = Array.from(greenCard.getElementsByTagName('div'));
+      items = allDivs.filter(d=>{
+        const t=d.textContent;
+        return (t.includes('박영희')||t.includes('김철수')||t.includes('이영수')||t.includes('최민수')||t.includes('정지연')) && t.length<100 && t.length>5;
+      });
+    }
+    
+    console.log('클릭 대상 찾음:', items.length, '명');
+    items.forEach((item, idx)=>{
+      item.style.cursor='pointer';
+      item.style.padding='6px 4px';
+      item.style.borderRadius='4px';
+      item.style.transition='background 0.2s';
+      if(idx===0) { item.style.background='#2a2a2a'; if(!item.textContent.includes('[선택됨]')) item.textContent=item.textContent+' [선택됨]'; }
+      
+      item.onclick = function(){
+        items.forEach(it=>{
+          it.style.background='';
+          it.textContent=it.textContent.replace(' [선택됨]','').replace('[선택됨]','').trim();
+        });
+        item.style.background='#3a3a3a';
+        item.textContent=item.textContent+' [선택됨]';
+        updateBlue(item.textContent);
+      };
+      item.onmouseenter = function(){ if(!this.textContent.includes('[선택됨]')) this.style.background='#1e1e1e'; };
+      item.onmouseleave = function(){ if(!this.textContent.includes('[선택됨]')) this.style.background=''; };
+    });
+  }
+
+  function updateBlue(userText){
+    const match = userText.match(/(박영희|김철수|이영수|최민수|정지연|한지민|오세훈|이신형|김다일)/);
+    const name = match?match[1]:'박영희';
+    const data = userData[name];
+    if(!data) return;
+    const fmt = formatApplyExpiry(data.apply);
+    
+    let blueCard=null;
+    document.querySelectorAll('.card').forEach(c=>{
+      if(c.innerHTML.includes('BLUE 세부항목')) blueCard=c;
+    });
+    if(!blueCard) return;
+    
+    const table = blueCard.querySelector('table');
+    if(table){
+      const rows = table.querySelectorAll('tr');
+      if(rows.length>=8){
+        rows[0].querySelectorAll('td')[1].textContent = data.join + ' (' + data.status + ')';
+        rows[1].querySelectorAll('td')[1].textContent = '-';
+        rows[2].querySelectorAll('td')[1].textContent = data.profit;
+        rows[3].querySelectorAll('td')[1].textContent = '-';
+        rows[4].querySelectorAll('td')[1].textContent = fmt.applyFmt + ' (' + data.type + ')';
+        rows[5].querySelectorAll('td')[1].textContent = '2회';
+        rows[6].querySelectorAll('td')[1].innerHTML = '<span style="color:'+(fmt.d<=3?'#ff4444':fmt.d<=7?'#ffcc00':'#4caf50')+';font-weight:bold;">'+fmt.dText+'</span> / '+data.fee+' | '+fmt.applyFmt+'+30일='+fmt.expiryFmt+' | POINT 2 FEE 30 | (매도가-매수가)×2×수량-30';
+        rows[7].querySelectorAll('td')[1].textContent = 'MNQM26 / NPOINT 04ac6b88e333695ed90b / ACCOUNT 7020-3101 FIXED';
+      }
+    }
+    
+    // 제목 업데이트
+    document.querySelectorAll('h4').forEach(h=>{
+      if(h.textContent.includes('개인매매종목 -')) h.textContent='개인매매종목 - '+name+' 전용 2종목 - '+fmt.dText+' - POINT 2 FEE 30';
+      if(h.textContent.includes('USER PC 개인매매종목 관리')) h.textContent='USER PC 개인매매종목 관리 - '+name+' 전용 - 나스닥외 - '+fmt.dText;
+    });
+    
+    console.log('선택:', name, fmt.dText);
+  }
+
+  function init(){
+    if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', ()=>setTimeout(makeClickable,500));
+    else setTimeout(makeClickable,500);
+    // 2초 후 재시도 (동적 로드 대비)
+    setTimeout(makeClickable,2000);
+  }
+  init();
+})();
+</script>
 </body>
 
 </html>
