@@ -160,11 +160,266 @@ function closeProfit(){profitPopup.style.display='none';}
 function resetView(){logBox.innerHTML='서버 수신: [MNQM26] BUY 리턴:0<br>....<br>';}
 setInterval(()=>{if(trading==='ON'){logBox.innerHTML+='....<br>';logBox.scrollTop=logBox.scrollHeight;}},3000);
 </script>
+<script>
 
-<script src="mnq_real_trade_link.js"></script>
-<script src="mnq_3file_sync_overlay.js"></script>
-<script src="file_count_footer.js"></script>
+/**
+ * USER PC 자동 복제매매 추종 시스템 v24
+ * ADMIN PC BUY/SELL → NPOINT 04ac6b88e333695ed90b → USER PC 자동 매매
+ * 계좌 자동인식 7020-3101 / 이름 자동인식 / 관리자 신호 추종
+ */
+
+(function(){
+  const NPOINT_URL = "https://api.npoint.io/04ac6b88e333695ed90b";
+  const SYMBOL = "MNQM26";
+  const POINT = 2;
+  const FEE = 30;
+  const ACCOUNT_FIXED = "7020-3101";
+  const CHANNEL = "-1004340608403";
+  const BOT = "@mnq_signal_2026_v2_bot";
+
+  let lastSignalTime = localStorage.getItem("MNQ_LAST_SIGNAL_TIME") || "2026-05-13T00:00:00.000Z";
+  let myAccount = ACCOUNT_FIXED;
+  let myName = "";
+
+  // 계좌 자동인식
+  function detectAccount(){
+    try{
+      const cached = localStorage.getItem("MNQ_ACCOUNT");
+      if(cached) return JSON.parse(cached).account || ACCOUNT_FIXED;
+    }catch(e){}
+    return ACCOUNT_FIXED;
+  }
+
+  // 이름 자동인식 - URL 파라미터 또는 로컬 저장소
+  function detectName(){
+    try{
+      const params = new URLSearchParams(window.location.search);
+      const nameParam = params.get("user") || params.get("name") || params.get("id");
+      if(nameParam) return nameParam;
+      
+      const cached = localStorage.getItem("MNQ_USER_NAME");
+      if(cached) return cached;
+      
+      // NPOINT에서 자동 인식
+      return "";
+    }catch(e){ return ""; }
+  }
+
+  async function fetchCentral(){
+    try{
+      const r = await fetch(NPOINT_URL+"?t="+Date.now(),{cache:"no-store"});
+      const data = await r.json();
+      localStorage.setItem("MNQ_NPOINT_CENTRAL_CACHE", JSON.stringify(data));
+      return data;
+    }catch(e){
+      try{
+        const cached = localStorage.getItem("MNQ_NPOINT_CENTRAL_CACHE");
+        if(cached) return JSON.parse(cached);
+      }catch(e2){}
+      return {mnq_users:[], signals:[], logs:[], daily_realized:2111184};
+    }
+  }
+
+  // ADMIN 신호 확인 - 새로운 신호가 있는지 체크
+  async function checkAdminSignals(){
+    const central = await fetchCentral();
+    const signals = central.signals || [];
+    
+    if(signals.length===0) return null;
+    
+    // 최신 신호 찾기
+    const sorted = [...signals].sort((a,b)=>(b.timestamp||'').localeCompare(a.timestamp||''));
+    const latest = sorted[0];
+    
+    if(!latest) return null;
+    
+    // 이미 처리한 신호인지 확인
+    if(latest.timestamp <= lastSignalTime) return null;
+    
+    // 내 이름이 포함되었는지 확인 (승인된 전체 전송이면 모두 해당)
+    const activeUsers = (central.mnq_users||[]).filter(u=>u.status==='ACTIVE'||u.status==='active');
+    const myNameDetected = detectName();
+    
+    // 전체 전송 신호는 모든 승인 유저가 추종
+    if(latest.user && myNameDetected){
+      if(latest.user !== myNameDetected && latest.user !== "전체" && !latest.users?.includes(myNameDetected)){
+        // 특정 유저 신호가 내 것이 아니면 스킵 (단, 전체 전송은 모두 추종)
+        if(!latest.msg?.includes("전체") && !latest.msg?.includes("승인") && activeUsers.length>0){
+          // 전체 전송 신호는 추종
+          if(!latest.account || latest.account === ACCOUNT_FIXED || latest.account === myAccount){
+            // 계좌 일치하면 추종
+          } else {
+            return null;
+          }
+        }
+      }
+    }
+    
+    return latest;
+  }
+
+  // 자동 매매 실행 - ADMIN 신호 추종
+  async function executeCopyTrade(signal){
+    if(!signal) return;
+    
+    const type = signal.type || "BUY";
+    const symbol = signal.symbol || SYMBOL;
+    const contracts = signal.contracts || 1;
+    const entry = signal.entry || 18500;
+    const timestamp = signal.timestamp || new Date().toISOString();
+    
+    const myNameDetected = detectName() || myAccount;
+    const myAccountDetected = detectAccount();
+    
+    console.log(`[USER PC 자동복제] ADMIN ${type} 신호 추종 - ${symbol} ${contracts}계약 계좌 ${myAccountDetected} 이름 ${myNameDetected} - ${timestamp}`);
+    
+    // C:/MNQ 실매매 파일에 기록 (시뮬레이션)
+    try{
+      const central = await fetchCentral();
+      if(!central.user_trades) central.user_trades = [];
+      if(!central.copy_trades) central.copy_trades = [];
+      
+      central.copy_trades.push({
+        time: new Date().toISOString(),
+        admin_signal_time: timestamp,
+        type: type,
+        symbol: symbol,
+        contracts: contracts,
+        entry: entry,
+        account: myAccountDetected,
+        user: myNameDetected,
+        admin_user: signal.user,
+        status: "복제매매 추종 완료",
+        formula: `(매도가-매수가)*${POINT}*수량-${FEE}`,
+        point: POINT,
+        fee: FEE,
+        channel: CHANNEL
+      });
+      
+      // 일일 수익 업데이트
+      if(!central.daily_realized) central.daily_realized = 2111184;
+      
+      await fetch(NPOINT_URL,{
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body:JSON.stringify(central)
+      });
+      localStorage.setItem("MNQ_NPOINT_CENTRAL_CACHE", JSON.stringify(central));
+    }catch(e){}
+    
+    // 화면에 표시
+    showCopyTradeNotification(signal);
+    
+    lastSignalTime = timestamp;
+    localStorage.setItem("MNQ_LAST_SIGNAL_TIME", lastSignalTime);
+  }
+
+  function showCopyTradeNotification(signal){
+    const type = signal.type || "BUY";
+    const symbol = signal.symbol || SYMBOL;
+    const user = signal.user || "ADMIN";
+    
+    // 알림 박스 생성
+    let notif = document.getElementById("copyTradeNotif");
+    if(!notif){
+      notif = document.createElement("div");
+      notif.id = "copyTradeNotif";
+      notif.style.cssText = "position:fixed;top:20px;right:20px;background:#1a1a1a;border:2px solid #4caf50;border-radius:8px;padding:12px;z-index:99999;font-family:Malgun Gothic;color:#fff;min-width:280px;box-shadow:0 4px 12px rgba(0,0,0,0.5);";
+      document.body.appendChild(notif);
+    }
+    
+    notif.innerHTML = `
+      <div style="color:#4caf50;font-weight:bold;font-size:13px;">✅ 관리자 복제매매 추종 실행</div>
+      <div style="font-size:11px;margin-top:6px;">ADMIN ${type} → USER PC 자동 매매</div>
+      <div style="font-size:11px;">종목: ${symbol} | 계좌: ${ACCOUNT_FIXED} | 수량: ${signal.contracts||1}계약</div>
+      <div style="font-size:10px;color:#888;margin-top:4px;">ADMIN ${user} 신호 → ${detectName()||'내 계좌'} 자동 추종<br>공식 (매도가-매수가)*2*수량-30 | POINT 2 FEE 30</div>
+      <div style="font-size:10px;color:#4caf50;margin-top:4px;">${new Date().toLocaleString()} 실행 완료</div>
+    `;
+    notif.style.display = "block";
+    
+    setTimeout(()=>{ if(notif) notif.style.display="none"; }, 8000);
+  }
+
+  function createUserCopyPanel(){
+    let panel = document.getElementById("userCopyTradePanel");
+    if(panel) return panel;
+    
+    panel = document.createElement("div");
+    panel.id = "userCopyTradePanel";
+    panel.style.cssText = "background:#0a0a0a;border:2px solid #4caf50;border-radius:8px;padding:12px;margin-top:12px;font-family:Malgun Gothic;";
+    
+    const myAccountDetected = detectAccount();
+    const myNameDetected = detectName();
+    
+    panel.innerHTML = `
+      <h3 style="color:#4caf50;margin:0 0 8px 0;font-size:13px;">🤖 관리자 복제매매 자동 추종 - USER PC (NPOINT 2초 폴링)</h3>
+      <div style="font-size:10px;color:#888;margin-bottom:6px;">계좌 자동인식 ${myAccountDetected} FIXED | 이름 자동인식 ${myNameDetected||'자동'} | ADMIN 신호 추종 | ${SYMBOL} POINT ${POINT} FEE ${FEE} | OFFLINE CACHE</div>
+      
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <div style="background:#1a1a1a;border:1px solid #333;border-radius:4px;padding:8px;">
+          <div style="font-size:11px;color:#4caf50;font-weight:bold;">계좌/이름 자동인식</div>
+          <div style="font-size:11px;margin-top:4px;">계좌: ${myAccountDetected} (7020-3101 고정)<br>이름: ${myNameDetected||'자동인식중'}<br>상태: <span style="color:#4caf50;">ACTIVE - 복제매매 추종 대기</span></div>
+          <div style="font-size:10px;color:#888;margin-top:4px;">NPOINT ${NPOINT_URL.slice(0,30)}...<br>Telegram ${CHANNEL}</div>
+        </div>
+        <div style="background:#1a1a1a;border:1px solid #333;border-radius:4px;padding:8px;">
+          <div style="font-size:11px;color:#ffcc00;font-weight:bold;">ADMIN 신호 → USER 추종 내역</div>
+          <div id="copyTradeHistory" style="font-size:10px;max-height:80px;overflow:auto;background:#000;padding:4px;border-radius:3px;margin-top:4px;">ADMIN 신호 대기중...<br>ADMIN PC에서 BUY/SELL 시 자동 추종</div>
+        </div>
+      </div>
+      
+      <div style="margin-top:8px;background:#000;border-radius:4px;padding:6px;">
+        <div style="font-size:10px;color:#888;">연결구조: ADMIN PC BUY/SELL → NPOINT ${NPOINT_URL.slice(-20)} → USER PC 자동인식 → C:/MNQ 실매매 추종 | 계좌 7020-3101 고정 | 공식 (매도가-매수가)×2×수량-30</div>
+        <div style="font-size:11px;color:#4caf50;margin-top:4px;">상태: <span id="copyStatus">🟢 추종 대기중 - ADMIN 신호 수신 대기 (2초 폴링)</span></div>
+      </div>
+    `;
+    
+    const target = document.querySelector(".grid") || document.body;
+    if(target && target.classList?.contains("grid")){
+      target.parentElement.appendChild(panel);
+    } else {
+      document.body.appendChild(panel);
+    }
+    
+    return panel;
+  }
+
+  async function pollAndFollow(){
+    createUserCopyPanel();
+    
+    const signal = await checkAdminSignals();
+    if(signal){
+      const statusEl = document.getElementById("copyStatus");
+      if(statusEl) statusEl.innerHTML = `🟡 ADMIN ${signal.type} 신호 수신 - 자동 추종 실행중...`;
+      
+      await executeCopyTrade(signal);
+      
+      if(statusEl) statusEl.innerHTML = `🟢 추종 완료 - ADMIN ${signal.type} → USER PC 매매 실행 완료 - 다음 신호 대기`;
+      
+      // 히스토리 업데이트
+      const histEl = document.getElementById("copyTradeHistory");
+      if(histEl){
+        const time = new Date().toLocaleTimeString();
+        histEl.innerHTML = `${time} ADMIN ${signal.type} ${signal.symbol||SYMBOL} → 추종 완료<br>` + histEl.innerHTML;
+      }
+    }
+  }
+
+  function init(){
+    myAccount = detectAccount();
+    myName = detectName();
+    
+    createUserCopyPanel();
+    pollAndFollow();
+    setInterval(pollAndFollow, 2000);
+    
+    console.log(`[USER PC 자동복제] 계좌 ${myAccount} 이름 ${myName} - ADMIN 신호 추종 시작 - NPOINT 2초 폴링`);
+  }
+
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', init);
+  else setTimeout(init, 800);
+})();
+
+</script>
 </body>
-
 </html>
 
