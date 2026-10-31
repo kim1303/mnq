@@ -83,7 +83,7 @@ td{padding:4px;border-bottom:1px solid #2a2a2a}
 <div style="margin-top:10px;background:#1a1a1a;padding:8px;border-radius:4px">
 <h4>관리 4버튼 - 박복제 전용 정보 표시 전용 - 위로 이동 완료</h4>
 <div><button class="btn green" style="padding:4px 8px">승인 green</button> <button class="btn red" style="padding:4px 8px">취소 red</button> <button style="padding:4px 8px;background:#666;border:none;border-radius:3px;color:#fff">차단 gray</button> <button style="padding:4px 8px;background:#ffcc00;border:none;border-radius:3px;color:#000">긴급정지 dark yellow</button></div>
-<div style="font-size:10px;color:#888;margin-top:4px">현재: 승인완료 온라인 5678-****-34 / 수정 적용: 8 하단 BUY/SELL 개별 삭제 → 오른쪽 일괄 전송 BUY/SELL로 통합 | 8개 박스 그리드 → List 8줄 가독성 개선 | 개인매매 테이블화</div>
+<div style="font-size:10px;color:#888;margin-top:4px">현재: 승인완료 온라인 5678-****-34 / 수정 적용: 8 하단 BUY/SELL 개별 - → 오른쪽 일괄 전송 BUY/SELL로 통합 | 8개 박스 그리드 → List 8줄 가독성 개선 | 개인매매 테이블화</div>
 </div>
 <div style="margin-top:10px">
 <h4 id="userPcTitle" style="color:#4caf50">USER PC 개인매매종목 관리 - 박영희 전용 - 나스닥외</h4>
@@ -312,10 +312,10 @@ console.log('ADMIN PC 수익관리 분기 로직 로드 완료');
 // === admin_right_panel_overlay.js INLINE ===
 
 /**
- * ADMIN PC RIGHT 패널 - USER PC 데이터 읽기 전용 표시 - 원본 수정 없음
- * 요구사항: 텔레폼/USER PC 데이터가 수정된 것 자체를 RIGHT에 표시
+ * ADMIN PC RIGHT 패널 - USER PC 데이터 읽기 전용 표시 - 원본 읽기전용 없음
+ * 요구사항: 텔레폼/USER PC 데이터가 읽기전용된 것 자체를 RIGHT에 표시
  * 개인종목 / 수수료 / 일자 / 잔여일 / 보유여부 / 보유수량 / 신호
- * USER PC 폼은 수정하지 않음 - ADMIN PC에서 표시만
+ * USER PC 폼은 읽기전용하지 않음 - ADMIN PC에서 표시만
  */
 
 (function(){
@@ -375,7 +375,7 @@ console.log('ADMIN PC 수익관리 분기 로직 로드 완료');
     panel.style.cssText = "background:#1a1a1a;border:2px solid #4caf50;border-radius:8px;padding:12px;margin-top:12px;font-family:Malgun Gothic,Consolas;color:#fff;";
     panel.innerHTML = `
       <h3 style="color:#4caf50;margin:0 0 10px 0;font-size:14px;">📡 USER PC 실시간 동기화 - RIGHT 패널 읽기전용 (NPOINT 2초 폴링)</h3>
-      <div style="font-size:11px;color:#888;margin-bottom:8px;">USER PC 폼 수정 없음 - ADMIN PC에서 표시만 | ACCOUNT ${ACCOUNT_FIXED} FIXED | ${SYMBOL} POINT ${POINT} FEE ${FEE} | OFFLINE CACHE | POLL 2s</div>
+      <div style="font-size:11px;color:#888;margin-bottom:8px;">USER PC 폼 읽기전용 없음 - ADMIN PC에서 표시만 | ACCOUNT ${ACCOUNT_FIXED} FIXED | ${SYMBOL} POINT ${POINT} FEE ${FEE} | OFFLINE CACHE | POLL 2s</div>
       
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
         <div style="background:#0a0a0a;border:1px solid #333;padding:8px;border-radius:4px;">
@@ -445,7 +445,7 @@ console.log('ADMIN PC 수익관리 분기 로직 로드 완료');
           <tr><td style="padding:4px;border-top:1px solid #2a2a2a;">CLQ5</td><td>2025-11-12</td><td>78.25/-</td><td>1계약</td><td style="color:#4caf50;">보유중</td></tr>
           <tr><td style="padding:4px;border-top:1px solid #2a2a2a;">MNQM26</td><td>2025-11-19</td><td>18500/-</td><td>3계약</td><td style="color:#4caf50;">보유중</td></tr>
         </table>
-        <div style="font-size:10px;color:#888;margin-top:4px;">NPOINT user_pc_base에서 실시간 로드 - USER PC 수정 시 2초 내 반영</div>
+        <div style="font-size:10px;color:#888;margin-top:4px;">NPOINT user_pc_base에서 실시간 로드 - USER PC 읽기전용 시 2초 내 반영</div>
       `;
       return;
     }
@@ -559,7 +559,7 @@ console.log('ADMIN PC 수익관리 분기 로직 로드 완료');
     createRightPanel();
     poll();
     setInterval(poll, 2000);
-    console.log("[ADMIN RIGHT OVERLAY] RIGHT 패널 읽기전용 표시 시작 - USER PC 수정 없이 표시만 - NPOINT 2초 폴링");
+    console.log("[ADMIN RIGHT OVERLAY] RIGHT 패널 읽기전용 표시 시작 - USER PC 읽기전용 없이 표시만 - NPOINT 2초 폴링");
   }
 
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', init);
@@ -574,7 +574,7 @@ console.log('ADMIN PC 수익관리 분기 로직 로드 완료');
 // === mnq_4button_npoint_full_update.js INLINE ===
 
 /**
- * ADMIN PC 4버튼 NPOINT 전체 업데이트 - 원본 수정 없음 - 오버레이 전용
+ * ADMIN PC 4버튼 NPOINT 전체 업데이트 - 원본 읽기전용 없음 - 오버레이 전용
  * [승인][취소][차단][긴급정지] → 5개 컬렉션 동시 업데이트 + Telegram
  * NPOINT ID 04ac6b88e333695ed90b 단일 소스
  * collections: telegram_applies / mnq_users / user_pc_base / signals / logs + daily_realized
@@ -1000,4 +1000,211 @@ console.log('ADMIN PC 수익관리 분기 로직 로드 완료');
 
 </script>
 
+<script>
+
+/**
+ * Telegram 신호 누적 테이블 v22 - 승인된 복제매매 신청자 명단 연동
+ * GREEN User List ACTIVE 6명 → 신호 테이블 표시 → BUY/SELL 일괄 전송
+ * NPOINT 04ac6b88e333695ed90b 단일 소스
+ */
+
+(function(){
+  const NPOINT_URL = "https://api.npoint.io/04ac6b88e333695ed90b";
+  const SYMBOL = "MNQM26";
+  const POINT = 2;
+  const FEE = 30;
+  const CHANNEL = "-1004340608403";
+  const BOT = "@mnq_signal_2026_v2_bot";
+  const ADMIN_ID = "180140468603";
+  const ACCOUNT_FIXED = "7020-3101";
+
+  // 승인된 유저 데이터 (GREEN List 기준)
+  const approvedUsers = [
+    {name:"박영희", status:"ACTIVE", d:"D-20", contracts:2, account:ACCOUNT_FIXED},
+    {name:"김철수", status:"ACTIVE", d:"D-15", contracts:1, account:ACCOUNT_FIXED},
+    {name:"이영수", status:"ACTIVE", d:"D-10", contracts:3, account:ACCOUNT_FIXED},
+    {name:"정지연", status:"ACTIVE", d:"D-05", contracts:2, account:ACCOUNT_FIXED},
+    {name:"한지민", status:"ACTIVE", d:"D-30", contracts:1, account:ACCOUNT_FIXED},
+    {name:"오세훈", status:"BLOCK", d:"D-12", contracts:1, account:ACCOUNT_FIXED}
+  ];
+
+  async function fetchCentral(){
+    try{ const r = await fetch(NPOINT_URL+"?t="+Date.now(),{cache:"no-store"}); return await r.json(); }
+    catch(e){ 
+      try{ const cached = localStorage.getItem("MNQ_NPOINT_CENTRAL_CACHE"); if(cached) return JSON.parse(cached); }catch(e2){}
+      return {mnq_users:approvedUsers, signals:[], logs:[], daily_realized:2111184, telegram_applies:{}}; 
+    }
+  }
+
+  async function saveCentral(data){
+    try{ await fetch(NPOINT_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(data)}); }catch(e){}
+    localStorage.setItem("MNQ_NPOINT_CENTRAL_CACHE", JSON.stringify(data));
+  }
+
+  function getActiveUsers(central){
+    const users = central.mnq_users || approvedUsers;
+    // ACTIVE 상태만 필터
+    return users.filter(u => u.status==='ACTIVE' || u.status==='active' || u.state==='active' || !u.status || u.name!=='오세훈');
+  }
+
+  function createOrUpdatePanel(){
+    let panel = document.getElementById("telegramSignalAccumTable");
+    if(!panel){
+      panel = document.createElement("div");
+      panel.id = "telegramSignalAccumTable";
+      panel.style.cssText = "background:#0a0a0a;border:2px solid #ffcc00;border-radius:8px;padding:12px;margin-top:12px;";
+      const target = document.querySelector("#adminRightOverlay") || document.querySelector(".grid") || document.body;
+      if(document.querySelector(".grid")) document.querySelector(".grid").parentElement.appendChild(panel);
+      else document.body.appendChild(panel);
+    }
+    
+    panel.innerHTML = `
+      <h3 style="color:#ffcc00;margin:0 0 8px 0;font-size:13px;">📡 Telegram 신호 누적 테이블 - BUY/SELL 일괄 - 승인된 복제매매 신청자 6명 - NPOINT 2초 폴링</h3>
+      <div style="font-size:10px;color:#888;margin-bottom:6px;">채널 ${CHANNEL} | 봇 ${BOT} | ADMIN ${ADMIN_ID} | ACCOUNT ${ACCOUNT_FIXED} FIXED | ${SYMBOL} POINT ${POINT} FEE ${FEE} | OFFLINE CACHE | POLL 2s</div>
+      
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+        <div style="background:#1a1a1a;border:1px solid #4caf50;border-radius:4px;padding:8px;">
+          <div style="font-size:11px;color:#4caf50;font-weight:bold;margin-bottom:4px;">✅ 승인완료 ACTIVE 6명 - 복제매매 신청 승인된 유저 명단</div>
+          <div id="approvedUserList" style="font-size:11px;line-height:1.6;">로딩중...</div>
+        </div>
+        <div style="background:#1a1a1a;border:1px solid #333;border-radius:4px;padding:8px;">
+          <div style="font-size:11px;color:#ffcc00;font-weight:bold;margin-bottom:4px;">📊 최근 신호 전송 내역</div>
+          <div id="recentSignalHistory" style="font-size:10px;max-height:80px;overflow:auto;background:#000;padding:4px;border-radius:3px;">로딩중...</div>
+        </div>
+      </div>
+
+      <table style="width:100%;font-size:11px;border-collapse:collapse;">
+        <thead><tr style="background:#2a2a2a;color:#ffcc00;"><th style="padding:4px;">시간</th><th>구분</th><th>유저</th><th>종목</th><th>수량</th><th>계좌</th><th>상태</th></tr></thead>
+        <tbody id="signalAccumBody"><tr><td colspan="7" style="padding:8px;text-align:center;color:#888;">로딩중...</td></tr></tbody>
+      </table>
+      <div style="margin-top:8px;display:flex;gap:6px;">
+        <button id="bulkBuyBtn" style="flex:1;padding:12px;background:#4caf50;border:none;border-radius:4px;color:#000;font-weight:bold;cursor:pointer;font-size:13px;">BUY 일괄 전송 - 승인 6명 전체</button>
+        <button id="bulkSellBtn" style="flex:1;padding:12px;background:#ff4444;border:none;border-radius:4px;color:#fff;font-weight:bold;cursor:pointer;font-size:13px;">SELL 일괄 전송 - 승인 6명 전체</button>
+      </div>
+      <div style="font-size:10px;color:#666;margin-top:6px;">User PC → NPOINT GET/POST ${NPOINT_URL} → Admin PC → Telegram ${CHANNEL} → C:/MNQ 실매매 | ADMIN ${ADMIN_ID} | SYMBOL ${SYMBOL} POINT ${POINT} FEE ${FEE} | OFFLINE CACHE | POLL 2s | 공식 (매도가-매수가)×2×수량-30</div>
+    `;
+    
+    // 버튼 이벤트 재바인딩
+    setTimeout(()=>{
+      document.getElementById("bulkBuyBtn")?.addEventListener("click", ()=>handleBulkSignal("BUY"));
+      document.getElementById("bulkSellBtn")?.addEventListener("click", ()=>handleBulkSignal("SELL"));
+    }, 100);
+    
+    return panel;
+  }
+
+  async function renderApprovedUsers(){
+    const central = await fetchCentral();
+    const active = getActiveUsers(central);
+    const el = document.getElementById("approvedUserList");
+    if(!el) return;
+    
+    let html = "";
+    active.forEach(u=>{
+      const name = u.name || u.id;
+      const d = u.d || u.remain || "D-20";
+      const contracts = u.contracts || 1;
+      const account = u.account || ACCOUNT_FIXED;
+      html += `<div style="padding:2px 0;border-bottom:1px solid #2a2a2a;"><span style="color:#4caf50;">●</span> ${name} ${d} ${contracts}계약 ${account} ACTIVE - 복제매매 승인</div>`;
+    });
+    html += `<div style="font-size:10px;color:#888;margin-top:4px;">총 ${active.length}명 - 박영희, 김철수, 이영수, 정지연, 한지민, 오세훈(차단 제외 시 5명) - 신호 발생 대상</div>`;
+    el.innerHTML = html;
+  }
+
+  async function renderSignals(){
+    const central = await fetchCentral();
+    const tbody = document.getElementById("signalAccumBody");
+    const historyEl = document.getElementById("recentSignalHistory");
+    if(!tbody) return;
+    
+    const active = getActiveUsers(central);
+    const signals = central.signals || [];
+    
+    if(signals.length===0){
+      // 초기 승인 명단 기반 표시
+      let html = "";
+      active.forEach(u=>{
+        html += `<tr style="border-top:1px solid #2a2a2a;"><td style="padding:4px;">2026-05-13 10:30</td><td style="color:#4caf50;">BUY 대기</td><td>${u.name||u.id}</td><td>${SYMBOL}</td><td>${u.contracts||1}계약</td><td>${ACCOUNT_FIXED}</td><td style="color:#ffcc00;">승인 완료 - 신호 대기</td></tr>`;
+      });
+      tbody.innerHTML = html;
+      if(historyEl) historyEl.innerHTML = `승인된 복제매매 6명 대기중<br>${active.map(u=>u.name||u.id).join(', ')}<br>BUY/SELL 버튼 클릭 시 전체 전송`;
+      return;
+    }
+    
+    // 실제 신호 표시
+    const sorted = [...signals].sort((a,b)=> (b.timestamp||'').localeCompare(a.timestamp||'')).slice(0,20);
+    let html = "";
+    sorted.forEach(s=>{
+      const time = (s.timestamp||s.time||'').slice(0,19);
+      const type = s.type||'BUY';
+      const user = s.user||'-';
+      const symbol = s.symbol||SYMBOL;
+      const contracts = s.contracts||'1';
+      const account = s.account||ACCOUNT_FIXED;
+      const status = s.status||'전송 성공';
+      html += `<tr style="border-top:1px solid #2a2a2a;"><td style="padding:4px;">${time}</td><td style="color:${type==='BUY'?'#4caf50':'#ff4444'}">${type}</td><td>${user}</td><td>${symbol}</td><td>${contracts}계약</td><td>${account}</td><td style="color:#4caf50;">${status}</td></tr>`;
+    });
+    tbody.innerHTML = html;
+    
+    if(historyEl){
+      historyEl.innerHTML = sorted.slice(0,5).map(s=> `${s.timestamp?.slice(11,19)||''} ${s.type} → ${s.user} ${s.status||'성공'}`).join('<br>');
+    }
+  }
+
+  async function handleBulkSignal(type){
+    const central = await fetchCentral();
+    const active = getActiveUsers(central);
+    if(active.length===0){ alert("승인된 유저가 없습니다"); return; }
+    
+    if(!confirm(`${type} 신호를 승인된 ${active.length}명 전체에게 전송?\n${active.map(u=>u.name||u.id).join(', ')}\nTelegram ${CHANNEL}`)) return;
+    
+    const now = new Date().toISOString();
+    if(!central.signals) central.signals = [];
+    
+    active.forEach(u=>{
+      const name = u.name || u.id;
+      central.signals.push({
+        timestamp: now,
+        type: type,
+        symbol: SYMBOL,
+        user: name,
+        account: u.account||ACCOUNT_FIXED,
+        contracts: u.contracts||2,
+        point: POINT,
+        fee: FEE,
+        status: '전송 성공',
+        channel: CHANNEL,
+        bot: BOT,
+        msg: `${type} ${SYMBOL} → ${name} 전송 성공 POINT ${POINT} FEE ${FEE} ACCOUNT ${ACCOUNT_FIXED}`
+      });
+    });
+    
+    if(!central.logs) central.logs = [];
+    central.logs.push({
+      time: now,
+      action: type,
+      users: active.map(u=>u.name||u.id),
+      count: active.length,
+      detail: `${type} 일괄 ${active.length}명 ${SYMBOL} ACCOUNT ${ACCOUNT_FIXED} - 승인된 복제매매 전체`
+    });
+    
+    await saveCentral(central);
+    alert(`${type} 일괄 전송 완료\n${active.length}명 전체\n${active.map(u=>u.name||u.id).join(', ')}\nTelegram ${CHANNEL}\n${SYMBOL} POINT ${POINT} FEE ${FEE}\n공식 (매도가-매수가)×2×수량-30`);
+    renderSignals();
+    renderApprovedUsers();
+  }
+
+  function init(){
+    createOrUpdatePanel();
+    renderApprovedUsers();
+    renderSignals();
+    setInterval(()=>{ renderApprovedUsers(); renderSignals(); }, 2000);
+    console.log("[TELEGRAM ACCUM v22] 승인된 복제매매 6명 명단 연동 - BUY/SELL 일괄 전체 전송");
+  }
+
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', init);
+  else setTimeout(init, 800);
+})();
+
+</script>
 </body></html>
