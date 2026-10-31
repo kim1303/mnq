@@ -1,28 +1,19 @@
 <!DOCTYPE html>
-<html lang="ko">
-<head>
-<meta charset="UTF-8">
-<title>ADMIN PC V20.11 FINAL - FORM1+FORM2+USER PC 개인매매 - 영구저장</title>
+<html><head><meta charset="utf-8"><title>ADMIN PC V20.11 FINAL - CLICK FIX</title>
 <style>
-body{background:#0a0a0a;color:#fff;font-family:Malgun Gothic;margin:0;padding:10px}
-.header{background:#1a1a1a;border:1px solid #333;padding:10px;display:flex;justify-content:space-between}
-.badge{padding:4px 8px;border-radius:4px;font-size:11px;background:#333}
+body{background:#111;color:#ddd;font-family:sans-serif;margin:0;padding:10px}
+.grid{display:grid;grid-template-columns:280px 1fr 320px;gap:10px}
+.card{background:#1a1a1a;border:1px solid #333;border-radius:6px;padding:10px}
+.badge{padding:2px 6px;border-radius:3px;font-size:10px}
 .badge.green{background:#4caf50;color:#000}
 .badge.yellow{background:#ffcc00;color:#000}
-.grid{display:grid;grid-template-columns:320px 1fr 340px;gap:10px;margin-top:10px}
-.card{background:#1a1a1a;border:1px solid #333;padding:10px;border-radius:6px}
-.btn{padding:6px 10px;border:none;border-radius:4px;cursor:pointer;margin:2px;font-size:12px}
-.btn.green{background:#4caf50;color:#000}
+table{width:100%;font-size:12px;border-collapse:collapse}
+td{padding:4px;border-bottom:1px solid #2a2a2a}
+.btn{padding:6px;border:none;border-radius:4px;cursor:pointer}
+.btn.green{background:#4caf50}
 .btn.red{background:#ff4444;color:#fff}
-.btn.gray{background:#666;color:#fff}
-.btn.yellow{background:#ffcc00;color:#000}
-table{width:100%;border-collapse:collapse;font-size:12px}
-th{background:#2a2a2a;color:#888;padding:6px;text-align:left}
-td{padding:6px;border-top:1px solid #2a2a2a}
-</style>
-</head>
-<body>
-<div class="header">
+</style></head><body>
+<div style="display:flex;justify-content:space-between;background:#222;padding:8px;border-radius:4px;margin-bottom:10px">
 <span>ADMIN PC V20.11 FINAL - FORM1+FORM2+USER PC - 9명 | ACTIVE 6 | 신규 3명 | MNQM26 LIVE</span>
 <span><span class="badge green">NPOINT 04ac6b88e333695ed90b</span> <span class="badge yellow">7020-3101 FIXED</span> <span class="badge">ADMIN 180140468603</span> <span class="badge">TG -1004340608403</span></span>
 </div>
@@ -30,7 +21,7 @@ td{padding:6px;border-top:1px solid #2a2a2a}
 <div class="card">
 <h3 style="color:#4caf50">GREEN User List 9명 total 4,154$</h3>
 <div style="font-size:11px;color:#888">A-전체(9) ACTIVE(6) 실투자(4) 모의(5) ONLINE(5) OFFLINE(4) 대기(2) 차단(1) 신규 3명</div>
-<div style="margin-top:8px;font-size:12px">
+<div id="userList" style="margin-top:8px;font-size:12px">
 <div>박영희 실투자 D-20 OFFLINE +950$ -180$ 2계약 30일(150만원) [선택됨]</div>
 <div>김철수 모의 D-15 ONLINE +620$ -90$ 1계약</div>
 <div>이영수 실투자 D-10 +1240$ -320$ 3계약</div>
@@ -44,199 +35,122 @@ td{padding:6px;border-top:1px solid #2a2a2a}
 </div>
 <div class="card">
 <h3 style="color:#4fc3f7">BLUE 세부항목 - List 8줄 가독성 개선</h3>
-<table>
+<table id="blueTable">
 <tr><td>가입일자</td><td>2025-11-08</td></tr>
 <tr><td>승인일자</td><td>-</td></tr>
 <tr><td>수익금</td><td>+450$ / -50$ (순 +400$) 수익 green</td></tr>
 <tr><td>복제매매 시작일</td><td>-</td></tr>
 <tr><td>신청일자</td><td>2025-11-03</td></tr>
 <tr><td>신청횟수</td><td>2회</td></tr>
-<tr><td>잔여일</td><td>D-22 / 10일(50만원)</td></tr>
+<tr><td>잔여일</td><td id="remainCell">D-22 / 10일(50만원)</td></tr>
 <tr><td>SYMBOL</td><td>MNQM26 / NPOINT 04ac6b88e333695ed90b</td></tr>
 </table>
 <div style="margin-top:10px">
-<h4>개인매매종목 - 박복제 전용 2종목</h4>
+<h4 id="personalTitle">개인매매종목 - 박영희 전용 2종목</h4>
 <table><tr><th>종목</th><th>매수일자</th><th>매도일자</th><th>매수가/매도가</th><th>보유여부</th></tr>
 <tr><td>MNQM26</td><td>2025-11-15</td><td>2025-11-18</td><td>18410/18560</td><td>미보유 gray</td></tr>
-<tr><td>MNQM26</td><td>2025-11-19</td><td>보유중</td><td>18500/-</td><td style="color:#4caf50">보유중 green</td></tr>
+<tr><td>MNQM26</td><td>2025-11-19</td><td>보유중</td><td>18500/-</td><td>보유중 green</td></tr>
 </table>
 </div>
-<div style="margin-top:12px;padding:10px;background:#2a2a2a;border-radius:4px">
+<div style="margin-top:10px;background:#1a1a1a;padding:8px;border-radius:4px">
 <h4>관리 4버튼 - 박복제 전용 정보 표시 전용 - 위로 이동 완료</h4>
-<button class="btn green">승인 green</button><button class="btn red">취소 red</button><button class="btn gray">차단 gray</button><button class="btn yellow">긴급정지 dark yellow</button>
-<div style="font-size:10px;color:#888;margin-top:6px">현재: 승인완료 온라인 5678-****-34 | 수정 적용: B 하단 BUY/SELL 개별 삭제 → 오른쪽 일괄 전송 BUY/SELL로 통합 | 8개 박스 그리드 → List 8줄 가독성 개선 | 개인매매 테이블화</div>
+<div><button class="btn green" style="padding:4px 8px">승인 green</button> <button class="btn red" style="padding:4px 8px">취소 red</button> <button style="padding:4px 8px;background:#666;border:none;border-radius:3px;color:#fff">차단 gray</button> <button style="padding:4px 8px;background:#ffcc00;border:none;border-radius:3px;color:#000">긴급정지 dark yellow</button></div>
+<div style="font-size:10px;color:#888;margin-top:4px">현재: 승인완료 온라인 5678-****-34 / 수정 적용: 8 하단 BUY/SELL 개별 삭제 → 오른쪽 일괄 전송 BUY/SELL로 통합 | 8개 박스 그리드 → List 8줄 가독성 개선 | 개인매매 테이블화</div>
 </div>
-<div style="margin-top:12px;padding:10px;background:#1e1e1e;border:1px solid #333;border-radius:4px">
-<h4 style="color:#4caf50">USER PC 개인매매종목 관리 - 박영희 전용 - 나스닥외</h4>
-<div style="font-size:11px;color:#888">USER PC base.json + NPOINT user_pc_base → ADMIN PC 동기화</div>
-<table><tr><th>종목</th><th>매수일자</th><th>매수/매도가</th><th>수량</th><th>보유여부</th><th>관리</th></tr>
-<tr><td>GCQ5</td><td>2025-11-10</td><td>2340.5/2355.2</td><td>2계약</td><td style="color:#4caf50">보유중</td><td>수정 삭제</td></tr>
-<tr><td>CLQ5</td><td>2025-11-12</td><td>78.25/-</td><td>1계약</td><td style="color:#4caf50">보유중</td><td>수정 삭제</td></tr>
+<div style="margin-top:10px">
+<h4 id="userPcTitle" style="color:#4caf50">USER PC 개인매매종목 관리 - 박영희 전용 - 나스닥외</h4>
+<div style="font-size:10px;color:#888">USER PC base.json + NPOINT user_pc_base → ADMIN PC 동기화</div>
+<table style="margin-top:4px"><tr><th>종목</th><th>매수일자</th><th>매수/매도가</th><th>수량</th><th>보유여부</th><th>관리</th></tr>
+<tr><td>GCQ5</td><td>2025-11-10</td><td>2340.5/2355.2</td><td>2계약</td><td>보유중</td><td>수정 삭제</td></tr>
+<tr><td>CLQ5</td><td>2025-11-12</td><td>78.25/-</td><td>1계약</td><td>보유중</td><td>수정 삭제</td></tr>
 </table>
-<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr 1fr auto;gap:4px;margin-top:8px">
-<input placeholder="종목" style="padding:6px;background:#333;border:1px solid #444;color:#fff;border-radius:4px"><input type="date" style="padding:6px;background:#333;border:1px solid #444;color:#fff"><input placeholder="매수가" style="padding:6px;background:#333;border:1px solid #444;color:#fff"><input placeholder="매도가" style="padding:6px;background:#333;border:1px solid #444;color:#fff"><input placeholder="수량" style="padding:6px;background:#333;border:1px solid #444;color:#fff"><select style="padding:6px;background:#333;color:#fff"><option>보유중</option><option>미보유</option></select><button class="btn green">추가</button>
-</div>
 </div>
 </div>
 <div class="card">
-<h3 style="color:#4fc3f7">일괄 신호 전송 승인 6 BLUE 4명</h3>
-<div style="font-size:11px;color:#888">TELEGRAM -1004340608403 연동 · Render 필터링 ACTIVE</div>
+<h4>일괄 신호 전송 승인 6 BLUE</h4>
+<div style="font-size:11px">TELEGRAM -1004340608403 연동 - Render 풀링</div>
 <div style="margin-top:8px;font-size:12px">
-<div>[✓] 박영희 D-20 +770$</div>
-<div>[✓] 김철수 D-15 +620$</div>
+<div>[V] 박영희 D-20 +770$</div>
+<div>[V] 김철수 D-15 +620$</div>
 <div>[ ] 최민수, 정지연, 한지민 체크 안됨</div>
 </div>
 <button class="btn green" style="width:100%;margin-top:8px">BUY 신호 보내기 - 선택 2명 일괄</button>
-<button class="btn red" style="width:100%">SELL 신호 보내기 - 선택 2명 일괄</button>
+<button class="btn red" style="width:100%;margin-top:4px">SELL 신호 보내기 - 선택 2명 일괄</button>
 <div style="margin-top:12px;padding:8px;background:#2a2a2a;border-radius:4px">
 <h4 style="margin:0 0 6px 0;font-size:12px;color:#facc15">FORM2 수익 관리 - daily_realized $2,111,184</h4>
 <div style="font-size:11px">수익회수 60% vs 12%<div style="background:#333;height:6px;border-radius:3px;margin:4px 0"><div style="background:#facc15;width:60%;height:6px"></div></div></div>
 <div style="font-size:11px">관리자 수익률 +60% / 내PC +54% | 입금 +2,150.50 당일 -45.20</div>
 <div style="background:#3a3000;color:#ffcc00;padding:6px;font-size:10px;border-radius:3px;margin-top:6px">1억 전에는 출금 하지 마십시오.</div>
-<div style="font-size:10px;color:#888;margin-top:6px">공식: (exit-entry)*2*contracts-30<br>C:/MNQ/license.json USER_1 2027-10-01<br>account.json 7020-3101 고정<br>base.json NPOINT 04ac6b88e333695ed90b</div>
+<div style="font-size:10px;color:#888;margin-top:6px">공식: (exit-entry)*2*contracts-30<br>C:/MNQ/license.json USER_1 2027-10-01<br>account.json 7020-3101 고정<br>base.json NPOINT 04ac6b88e333695ed90b<br>전체 파일 110개 / 1024개 - 여유 914개</div>
 </div>
 <div style="margin-top:10px">
 <h4>연결구조</h4>
-<div style="font-size:10px;color:#888">User PC → NPOINT GET/POST https://api.npoint.io/04ac6b88e333695ed90b → Admin PC → Telegram -1004340608403 → C:/MNQ 실매매<br>ADMIN 180140468603 | SYMBOL MNQM26 POINT 2 FEE 30 | OFFLINE CACHE | POLL 2s</div>
+<div style="font-size:10px;color:#888">User PC → NPOINT GET/POST https://api.npoint.io/04ac6b88e333695ed90b → Admin PC → Telegram -1004340608403 → C:/MNQ 실매매<br>ADMIN 180140468603 | SYMBOL MNQM26 POINT 2 FEE 30 | OFFLINE CACHE | POLL 2s | 공식 (매도가-매수가)×POINT×수량-FEE</div>
 </div>
 <div style="margin-top:10px">
 <h4>수익 현황 72.3% 305만원 1,240만원 5/7</h4>
 <div style="background:#333;height:6px;border-radius:3px"><div style="background:#4caf50;width:72.3%;height:6px"></div></div>
 <div style="font-size:11px;margin-top:4px">총 수익 +4,784$ 승률 72.3% 수익 회원 5/7</div>
 </div>
-<div style="margin-top:10px">
-<h4>실행로그</h4>
-<div style="background:#000;color:#0f0;padding:6px;font-size:10px;height:80px;overflow:auto;border-radius:4px">2026-05-13 BUY MNQM26 → 2명 [박영희, 김철수] 전송 성공<br>2026-05-13 SELL → 2명 성공<br>승인 갱신 박영희 D-20 → D-19<br>텔레그램 모든 신호 데이터화 누적관리</div>
 </div>
 </div>
-</div>
-
 <script>
 (function(){
-  function calcDminus(applyDateStr){
-    try{
-      if(!applyDateStr) return 20;
-      const apply = new Date(applyDateStr);
-      const expiry = new Date(apply); expiry.setDate(expiry.getDate()+30);
-      const today = new Date(); today.setHours(0,0,0,0); expiry.setHours(0,0,0,0);
-      return Math.ceil((expiry - today)/(1000*60*60*24));
-    }catch(e){ return 20; }
+  function calcD(applyStr){
+    const apply = new Date(applyStr);
+    const expiry = new Date(apply); expiry.setDate(expiry.getDate()+30);
+    const today = new Date(); today.setHours(0,0,0,0); expiry.setHours(0,0,0,0);
+    return Math.ceil((expiry - today)/86400000);
   }
-  function formatApplyExpiry(applyDateStr){
-    try{
-      const apply = new Date(applyDateStr);
-      const expiry = new Date(apply); expiry.setDate(expiry.getDate()+30);
-      const applyFmt = apply.toISOString().slice(0,10);
-      const expiryFmt = expiry.toISOString().slice(0,10);
-      const d = calcDminus(applyDateStr);
-      return {applyFmt, expiryFmt, d, dText: d>=0?`D-${d}`:`D+${Math.abs(d)} (만기)`};
-    }catch(e){ return {applyFmt: applyDateStr, expiryFmt:'-', d:20, dText:'D-20'}; }
+  function fmt(applyStr){
+    const apply = new Date(applyStr);
+    const expiry = new Date(apply); expiry.setDate(expiry.getDate()+30);
+    const a=apply.toISOString().slice(0,10), e=expiry.toISOString().slice(0,10);
+    const d=calcD(applyStr);
+    return {a,e,d, txt:d>=0?'D-'+d:'D+'+Math.abs(d)+' (만기)'};
   }
-  
-  const userData = {
-    '박영희': {apply:'2025-11-03', join:'2025-11-08', profit:'+950$ / -180$ (순 +770$) 수익 green', contracts:'2계약', fee:'30일(150만원)', type:'실투자', status:'OFFLINE'},
-    '김철수': {apply:'2025-11-08', join:'2025-11-10', profit:'+620$ / -90$ (순 +530$) 수익 green', contracts:'1계약', fee:'10일(50만원)', type:'모의', status:'ONLINE'},
-    '이영수': {apply:'2025-10-25', join:'2025-10-26', profit:'+1240$ / -320$ (순 +920$) 수익 green', contracts:'3계약', fee:'30일(150만원)', type:'실투자', status:'OFFLINE'},
-    '최민수': {apply:'2025-11-15', join:'2025-11-15', profit:'+80$ / -20$ (순 +60$) NEW', contracts:'1계약', fee:'1일(5만원)', type:'모의', status:'OFFLINE'},
-    '정지연': {apply:'2025-10-20', join:'2025-10-21', profit:'+2100$ / -450$ (순 +1650$) 수익 green', contracts:'2계약', fee:'30일(150만원)', type:'실투자', status:'ONLINE'},
-    '한지민': {apply:'2025-11-01', join:'2025-11-02', profit:'+310$ / -110$ (순 +200$) 수익 green', contracts:'1계약', fee:'10일(50만원)', type:'모의', status:'ONLINE'},
-    '오세훈': {apply:'2025-10-28', join:'2025-10-29', profit:'+44$ / -30$ (순 +14$) 수익', contracts:'1계약', fee:'10일(50만원)', type:'실투자', status:'OFFLINE'},
-    '이신형': {apply:'2025-11-18', join:'2025-11-18', profit:'+0$ / -0$ (순 +0$) NEW', contracts:'1계약', fee:'당일매매(5만원)', type:'모의', status:'OFFLINE'},
-    '김다일': {apply:'2025-11-10', join:'2025-11-11', profit:'+120$ / -0$ (순 +120$) NEW', contracts:'1계약', fee:'1일(5만원)', type:'모의', status:'ONLINE'}
+  const data={
+    '박영희':{apply:'2025-11-03', join:'2025-11-08', profit:'+950$ / -180$ (순 +770$) 수익 green', fee:'30일(150만원)', type:'실투자', status:'OFFLINE'},
+    '김철수':{apply:'2025-11-08', join:'2025-11-10', profit:'+620$ / -90$ (순 +530$) 수익 green', fee:'10일(50만원)', type:'모의', status:'ONLINE'},
+    '이영수':{apply:'2025-10-25', join:'2025-10-26', profit:'+1240$ / -320$ (순 +920$) 수익 green', fee:'30일(150만원)', type:'실투자', status:'OFFLINE'},
+    '최민수':{apply:'2025-11-15', join:'2025-11-15', profit:'+80$ / -20$ (순 +60$) NEW', fee:'1일(5만원)', type:'모의', status:'OFFLINE'},
+    '정지연':{apply:'2025-10-20', join:'2025-10-21', profit:'+2100$ / -450$ (순 +1650$) 수익 green', fee:'30일(150만원)', type:'실투자', status:'ONLINE'},
+    '한지민':{apply:'2025-11-01', join:'2025-11-02', profit:'+310$ / -110$ (순 +200$) 수익 green', fee:'10일(50만원)', type:'모의', status:'ONLINE'},
+    '오세훈':{apply:'2025-10-28', join:'2025-10-29', profit:'+44$ / -30$ (순 +14$) 수익', fee:'10일(50만원)', type:'실투자', status:'OFFLINE'},
+    '이신형':{apply:'2025-11-18', join:'2025-11-18', profit:'+0$ / -0$ (순 +0$) NEW', fee:'당일매매(5만원)', type:'모의', status:'OFFLINE'},
+    '김다일':{apply:'2025-11-10', join:'2025-11-11', profit:'+120$ / -0$ (순 +120$) NEW', fee:'1일(5만원)', type:'모의', status:'ONLINE'}
   };
-
-  function makeClickable(){
-    let greenCard=null;
-    document.querySelectorAll('.card').forEach(c=>{
-      if(c.innerHTML.includes('GREEN User List')) greenCard=c;
-    });
-    if(!greenCard){ console.log('GREEN 카드 못찾음'); return; }
-    
-    // 왼쪽 리스트 컨테이너 찾기 - 여러 방법 시도
-    let items=[];
-    let container = greenCard.querySelector('div[style*="margin-top:8px"]');
-    if(container) items = Array.from(container.querySelectorAll('div'));
-    if(items.length===0){
-      // 모든 div 중 박영희, 김철수 포함된 것
-      items = Array.from(greenCard.querySelectorAll('div')).filter(d=>d.textContent.includes('박영희')||d.textContent.includes('김철수')||d.textContent.includes('이영수'));
-    }
-    if(items.length<9){
-      // 전체에서 다시 시도
-      const allDivs = Array.from(greenCard.getElementsByTagName('div'));
-      items = allDivs.filter(d=>{
-        const t=d.textContent;
-        return (t.includes('박영희')||t.includes('김철수')||t.includes('이영수')||t.includes('최민수')||t.includes('정지연')) && t.length<100 && t.length>5;
-      });
-    }
-    
-    console.log('클릭 대상 찾음:', items.length, '명');
-    items.forEach((item, idx)=>{
-      item.style.cursor='pointer';
-      item.style.padding='6px 4px';
-      item.style.borderRadius='4px';
-      item.style.transition='background 0.2s';
-      if(idx===0) { item.style.background='#2a2a2a'; if(!item.textContent.includes('[선택됨]')) item.textContent=item.textContent+' [선택됨]'; }
-      
-      item.onclick = function(){
-        items.forEach(it=>{
-          it.style.background='';
-          it.textContent=it.textContent.replace(' [선택됨]','').replace('[선택됨]','').trim();
-        });
-        item.style.background='#3a3a3a';
-        item.textContent=item.textContent+' [선택됨]';
-        updateBlue(item.textContent);
-      };
-      item.onmouseenter = function(){ if(!this.textContent.includes('[선택됨]')) this.style.background='#1e1e1e'; };
-      item.onmouseleave = function(){ if(!this.textContent.includes('[선택됨]')) this.style.background=''; };
-    });
-  }
-
-  function updateBlue(userText){
-    const match = userText.match(/(박영희|김철수|이영수|최민수|정지연|한지민|오세훈|이신형|김다일)/);
-    const name = match?match[1]:'박영희';
-    const data = userData[name];
-    if(!data) return;
-    const fmt = formatApplyExpiry(data.apply);
-    
-    let blueCard=null;
-    document.querySelectorAll('.card').forEach(c=>{
-      if(c.innerHTML.includes('BLUE 세부항목')) blueCard=c;
-    });
-    if(!blueCard) return;
-    
-    const table = blueCard.querySelector('table');
-    if(table){
-      const rows = table.querySelectorAll('tr');
-      if(rows.length>=8){
-        rows[0].querySelectorAll('td')[1].textContent = data.join + ' (' + data.status + ')';
-        rows[1].querySelectorAll('td')[1].textContent = '-';
-        rows[2].querySelectorAll('td')[1].textContent = data.profit;
-        rows[3].querySelectorAll('td')[1].textContent = '-';
-        rows[4].querySelectorAll('td')[1].textContent = fmt.applyFmt + ' (' + data.type + ')';
-        rows[5].querySelectorAll('td')[1].textContent = '2회';
-        rows[6].querySelectorAll('td')[1].innerHTML = '<span style="color:'+(fmt.d<=3?'#ff4444':fmt.d<=7?'#ffcc00':'#4caf50')+';font-weight:bold;">'+fmt.dText+'</span> / '+data.fee+' | '+fmt.applyFmt+'+30일='+fmt.expiryFmt+' | POINT 2 FEE 30 | (매도가-매수가)×2×수량-30';
-        rows[7].querySelectorAll('td')[1].textContent = 'MNQM26 / NPOINT 04ac6b88e333695ed90b / ACCOUNT 7020-3101 FIXED';
-      }
-    }
-    
-    // 제목 업데이트
-    document.querySelectorAll('h4').forEach(h=>{
-      if(h.textContent.includes('개인매매종목 -')) h.textContent='개인매매종목 - '+name+' 전용 2종목 - '+fmt.dText+' - POINT 2 FEE 30';
-      if(h.textContent.includes('USER PC 개인매매종목 관리')) h.textContent='USER PC 개인매매종목 관리 - '+name+' 전용 - 나스닥외 - '+fmt.dText;
-    });
-    
-    console.log('선택:', name, fmt.dText);
-  }
-
   function init(){
-    if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', ()=>setTimeout(makeClickable,500));
-    else setTimeout(makeClickable,500);
-    // 2초 후 재시도 (동적 로드 대비)
-    setTimeout(makeClickable,2000);
+    const list = document.getElementById('userList');
+    const rows = list.querySelectorAll('div');
+    rows.forEach((el,i)=>{
+      el.style.cursor='pointer';
+      el.style.padding='6px 4px';
+      el.style.borderRadius='4px';
+      if(i===0){ el.style.background='#2a2a2a'; }
+      el.addEventListener('click', function(){
+        rows.forEach(r=>{ r.style.background=''; r.textContent=r.textContent.replace(' [선택됨]',''); });
+        this.style.background='#3a3a3a';
+        this.textContent=this.textContent+' [선택됨]';
+        const m=this.textContent.match(/(박영희|김철수|이영수|최민수|정지연|한지민|오세훈|이신형|김다일)/);
+        const name=m?m[1]:'박영희';
+        const d=data[name];
+        const f=fmt(d.apply);
+        const table=document.getElementById('blueTable').querySelectorAll('tr');
+        table[0].querySelectorAll('td')[1].textContent=d.join+' ('+d.status+')';
+        table[2].querySelectorAll('td')[1].textContent=d.profit;
+        table[4].querySelectorAll('td')[1].textContent=f.a+' ('+d.type+')';
+        table[6].querySelectorAll('td')[1].innerHTML='<span style="color:'+(f.d<=3?'#ff4444':f.d<=7?'#ffcc00':'#4caf50')+';font-weight:bold">'+f.txt+'</span> / '+d.fee+' | '+f.a+'+30일='+f.e+' | POINT 2 FEE 30 | (매도가-매수가)×2×수량-30';
+        document.getElementById('personalTitle').textContent='개인매매종목 - '+name+' 전용 2종목 - '+f.txt+' - POINT 2 FEE 30';
+        document.getElementById('userPcTitle').textContent='USER PC 개인매매종목 관리 - '+name+' 전용 - 나스닥외 - '+f.txt;
+        document.getElementById('remainCell').innerHTML='<span style="color:'+(f.d<=3?'#ff4444':f.d<=7?'#ffcc00':'#4caf50')+';font-weight:bold">'+f.txt+'</span> / '+d.fee+' | '+f.a+'+30일='+f.e;
+      });
+      el.addEventListener('mouseenter', function(){ if(!this.textContent.includes('[선택됨]')) this.style.background='#1e1e1e'; });
+      el.addEventListener('mouseleave', function(){ if(!this.textContent.includes('[선택됨]')) this.style.background=''; });
+    });
   }
-  init();
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
 })();
 </script>
-</body>
-
-</html>
+</body></html>
